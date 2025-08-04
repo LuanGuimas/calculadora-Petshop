@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Calculadora de Petshop</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    max-width: 450px;
+    margin: 40px auto;
+    padding: 0 15px;
+    background: #f0f4f8;
+    color: #333;
+  }
+  h1 {
+    text-align: center;
+    color: #2a7ae2;
+  }
+  label {
+    display: block;
+    margin-top: 15px;
+    font-weight: bold;
+  }
+  input[type="date"],
+  input[type="number"] {
+    width: 100%;
+    padding: 8px;
+    font-size: 1rem;
+    margin-top: 5px;
+    box-sizing: border-box;
+  }
+  button {
+    margin-top: 20px;
+    width: 100%;
+    background-color: #2a7ae2;
+    color: white;
+    font-size: 1.1rem;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  button:hover {
+    background-color: #1a5ec8;
+  }
+  .resultado {
+    margin-top: 30px;
+    background: white;
+    padding: 15px 20px;
+    border-radius: 6px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  }
+</style>
+</head>
+<body>
+
+<h1>Calculadora de Petshop</h1>
+
+<form id="formPetshop">
+  <label for="data">Data do banho:</label>
+  <input type="date" id="data" required />
+
+  <label for="pequenos">Quantidade de cães pequenos:</label>
+  <input type="number" id="pequenos" min="0" value="0" required />
+
+  <label for="grandes">Quantidade de cães grandes:</label>
+  <input type="number" id="grandes" min="0" value="0" required />
+
+  <button type="submit">Calcular</button>
+</form>
+
+<div class="resultado" id="resultado" style="display:none;">
+  <h2>Melhor Petshop:</h2>
+  <p><strong id="nomePetshop"></strong></p>
+  <p>Preço total: <strong id="precoTotal"></strong></p>
+</div>
+
+<script>
+  
+  function isFimDeSemana(dataStr) {
+    const data = new Date(dataStr);
+    const diaSemana = data.getDay(); 
+    return diaSemana === 0 || diaSemana === 6;
+  }
+
+  document.getElementById('formPetshop').addEventListener('submit', function(event) {
+    event.preventDefault();
+
+    const data = document.getElementById('data').value;
+    const qtdPequenos = parseInt(document.getElementById('pequenos').value, 10);
+    const qtdGrandes = parseInt(document.getElementById('grandes').value, 10);
+
+    if (!data) {
+      alert('Por favor, insira uma data válida.');
+      return;
+    }
+
+    const fimDeSemana = isFimDeSemana(data);
+
+    
+    let preco_MCF_pequeno = 20.0;
+    let preco_MCF_grande = 40.0;
+    if (fimDeSemana) {
+      preco_MCF_pequeno *= 1.2;
+      preco_MCF_grande *= 1.2;
+    }
+    const total_MCF = preco_MCF_pequeno * qtdPequenos + preco_MCF_grande * qtdGrandes;
+
+    
+    let preco_VR_pequeno = fimDeSemana ? 20.0 : 15.0;
+    let preco_VR_grande = fimDeSemana ? 55.0 : 50.0;
+    const total_VR = preco_VR_pequeno * qtdPequenos + preco_VR_grande * qtdGrandes;
+
+    
+    const preco_CC_pequeno = 30.0;
+    const preco_CC_grande = 45.0;
+    const total_CC = preco_CC_pequeno * qtdPequenos + preco_CC_grande * qtdGrandes;
+
+    
+    const dist_MCF = 2.0;
+    const dist_VR = 1.7;
+    const dist_CC = 0.8;
+
+    
+    let melhorPetshop = 'Meu Canino Feliz';
+    let melhorPreco = total_MCF;
+    let melhorDist = dist_MCF;
+
+    if (total_VR < melhorPreco || (total_VR === melhorPreco && dist_VR < melhorDist)) {
+      melhorPetshop = 'Vai Rex';
+      melhorPreco = total_VR;
+      melhorDist = dist_VR;
+    }
+    if (total_CC < melhorPreco || (total_CC === melhorPreco && dist_CC < melhorDist)) {
+      melhorPetshop = 'ChowChawgas';
+      melhorPreco = total_CC;
+      melhorDist = dist_CC;
+    }
+
+    
+    document.getElementById('nomePetshop').textContent = melhorPetshop;
+    document.getElementById('precoTotal').textContent = `R$ ${melhorPreco.toFixed(2)}`;
+    document.getElementById('resultado').style.display = 'block';
+  });
+</script>
+
+</body>
+</html>
